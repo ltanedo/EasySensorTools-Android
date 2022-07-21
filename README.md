@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     
 ```
 
-## Example Output (Parsed protobuf)
+## Example Protobuf Schema
 - output will be in pure protobuf 
 - needs to be decded with included "sensor.proto" schema file
 - incomplete example below
