@@ -43,6 +43,18 @@ class MainActivity : AppCompatActivity() {
     
 ```
 
+## Simple Backend Usage (Python)
+- folder "Python-Tools" included to quickly parse ".pb" files from EasySensorTools (ANDROID)
+- example python code below
+- "sensor_pb2.py" is the only class needed to parse the ".pb" files
+```
+import sensor_pb2
+
+trip = sensor_pb2.Trip()
+trip.ParseFromString(open("temp6.pb", "rb").read())
+print(trip)
+```
+
 ## Example Output (that's JSON Parsed)
 ```
 startingTimestamp: 1658433552592
@@ -119,6 +131,8 @@ SensorSet {
   }
 }
 ```
+
+
 
 ## Example Protobuf Schema
 - necessary to decode outputed ".pb" file
