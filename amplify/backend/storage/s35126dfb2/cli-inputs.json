@@ -1,0 +1,18 @@
+{
+  "resourceName": "s35126dfb2",
+  "policyUUID": "5126dfb2",
+  "bucketName": "abhishekamplifyaec944c6256e4e29a3d21fd0ce7aa8d3",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
