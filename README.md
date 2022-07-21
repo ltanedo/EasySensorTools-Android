@@ -43,9 +43,86 @@ class MainActivity : AppCompatActivity() {
     
 ```
 
+## Example Output (that's JSON Parsed)
+```
+startingTimestamp: 1658433552592
+endingTimestamp: 1658433556695
+deviceId: "769c90af39fcfbd4"
+SensorSet {
+  timestamp: 121513809464881
+  loc {
+    latitude: 37.4216863
+    longitude: -122.0842771
+    time: 1658433553020
+    accuracy: 600
+  }
+  acc {
+    y: 9.776321
+    z: 0.812345
+  }
+  rot {
+    x: 0.6771978
+    y: 1.1314983e-08
+    z: 9.0172836e-07
+    cos: 0.73580104
+  }
+  gyr {
+  }
+  lin {
+    x: 0.0010053776
+    y: 0.0033864975
+    z: -0.00014686584
+  }
+  gra {
+    x: -0.0010053776
+    y: 9.772935
+    z: 0.8124919
+  }
+  mag {
+    y: 9.875
+    z: -47.75
+  }
+}
+SensorSet {
+  timestamp: 121515809464881
+  loc {
+    latitude: 37.4216863
+    longitude: -122.0842771
+    time: 1658433553020
+    accuracy: 600
+  }
+  acc {
+    y: 9.776321
+    z: 0.812345
+  }
+  rot {
+    x: 0.67719775
+    y: 1.19095134e-07
+    z: 9.550031e-07
+    cos: 0.73580104
+  }
+  gyr {
+  }
+  lin {
+    x: 0.00047054014
+    y: 0.003417015
+    z: -0.00050503016
+  }
+  gra {
+    x: -0.00047054014
+    y: 9.772904
+    z: 0.81285006
+  }
+  mag {
+    y: 9.875
+    z: -47.75
+  }
+}
+```
+
 ## Example Protobuf Schema
-- output will be in pure protobuf 
-- needs to be decded with included "sensor.proto" schema file
+- necessary to decode outputed ".pb" file
+- needs to be decoded with included "sensor.proto" schema file (python is easiest to decode with)
 - incomplete example below
 ```
 /*****************************************************************************
