@@ -5,13 +5,17 @@ import android.util.Log
 import com.development.easiestsqllib.Column
 import com.development.easiestsqllib.EasiestDB
 import java.io.File
+import java.lang.Exception
 
 class StorageTools {
 
-    private lateinit var context : Context
+    private lateinit var context      : Context
+    private lateinit var amplifyTools : AmplifyTools
+
 
     constructor(mContext: Context) {
         context = mContext
+        amplifyTools = AmplifyTools(context)
     }
 
     fun getDatabases(): Array<File> {
@@ -24,6 +28,7 @@ class StorageTools {
     }
 
     fun getFiles(): Array<File> {
+        Log.i("AWS", "i was called")
         val directory = context.filesDir
         val path = directory.toString()
         val files: Array<File> = directory.listFiles()
@@ -32,27 +37,39 @@ class StorageTools {
         return files
     }
 
-    fun convertDBtoProto() {
-        // TODO: for loop -> alldb toprotobuff
-        // if failed delete db
-        var files : Array<File> = getDatabases()
-        if (files.isEmpty()) return
-
-
+    fun uploadAll() {
+        var files : Array<File> = getFiles()
         files.forEach { file ->
-            if (
-                "DEMO_DATABASE" in file.toString()      ||
-                "awss3transfertable" in file.toString() ||
-                file.extension == "db-journal"          ||
-                file.extension == "DB-journal"
-            ) return@forEach
-
-            Log.i("convertDBtoProto()", "${file.extension} - ${file.toString()}")
+            try {
+                amplifyTools.uploadFile(file,file.name)
+                Log.i("AWS", "${file.extension} - ${file.toString()}")
+            } catch (e: Exception) { Log.i("AWS", "$file - Upload failure") }
         }
     }
 
-    fun pushAllProto() {
-        // TODO: for loop
-        // push all proto
+    fun cleanup() {
+//        var files : Array<File> = storageTools.getDatabases()
+//        files.forEach { file ->
+//            if (
+//                "DEMO_DATABASE" in file.toString()      ||
+//                "awss3transfertable" in file.toString() ||
+//                file.extension == "db-journal"          ||
+//                file.extension == "DB-journal"
+//            ) return@forEach
+//
+//            Log.i("convertDBtoProto()", "${file.extension} - ${file.toString()}")
+//            try {
+//                var temp = ProtobufTools.toProto(
+//                    tripString,
+//                    SensorOuterClass.Trip.getDefaultInstance()
+//                )
+//                dbName = dbName.replace(".DB",".pb")
+//                val file = File(context.filesDir, "$dbName.pb")
+//                FileOutputStream(file).use { output ->
+//                    temp.writeTo(output)
+//                }
+//            } catch (e: Exception) { }
+//        }
     }
+
 }

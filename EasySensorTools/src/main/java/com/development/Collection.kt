@@ -1,44 +1,57 @@
 package com.development
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.development.easysensortools.DatabaseTools
+import com.development.easysensortools.AmplifyTools
+import com.development.easysensortools.ProtobufTools
 import com.development.easysensortools.SensorManager
 import com.development.easysensortools.StorageTools
+import com.development.sensor.SensorOuterClass
+import java.io.File
+import java.io.FileOutputStream
+import java.lang.Exception
 
 
 class Collection {
 
     // Configuration
-    private val samplingPeriodUs : Int      = 20000
-    private val refreshInterval  : Int      = 20000
-    private val amplifyEnabled   : Boolean  = false
-    private val runCleanup       : Boolean  = false
+    private var samplingPeriodUs : Int      = 20000
+    private var refreshInterval  : Int      = 20000
+    private var amplifyEnabled   : Boolean  = false
+    private var runCleanup       : Boolean  = false
 
 
     // References to main app
     private lateinit var mainActivity  : AppCompatActivity
-    private lateinit var sensorManager: SensorManager
-    private lateinit var storageTools: StorageTools
+    private lateinit var sensorManager : SensorManager
+    private lateinit var storageTools  : StorageTools
+    private lateinit var amplifyTools  : AmplifyTools
 
 
     constructor(activity: AppCompatActivity, mSubscriptions: List<String>) {
-        sensorManager = SensorManager(activity, mSubscriptions)
         storageTools = StorageTools(activity)
+        sensorManager = SensorManager(activity, mSubscriptions, storageTools)
+
+//        amplifyTools = AmplifyTools(activity)
     }
 
     fun start(
-        samplingPeriodUs : Int = 2000,
-        refreshInterval  : Int = 2,
-        amplifyEnabled : Boolean = false,
-        runCleanup     : Boolean = false
+        mSamplingPeriodUs : Int = 100,
+        mRefreshInterval  : Int = 1,
+        mAmplifyEnabled : Boolean = true,
+        mRunCleanup     : Boolean = false
     ) {
-        // TODO: 1. check for databases without proto -> build [StorageTools]
-        // TODO: 2. check for proto not pushed -> push         [StorageTools]
-        sensorManager.start()
+        samplingPeriodUs = mSamplingPeriodUs
+        refreshInterval  = mRefreshInterval
+        amplifyEnabled   = mAmplifyEnabled
+        runCleanup       = mRunCleanup
+        sensorManager.start(mSamplingPeriodUs, mRefreshInterval, mAmplifyEnabled)
     }
 
     fun stop() {
         sensorManager.stop()
-        // TODO: check for proto not pushed -> push            [StorageTools]
+
+        if (amplifyEnabled) storageTools.uploadAll()
+        if (amplifyEnabled) storageTools.cleanup()
     }
 
 }

@@ -24,7 +24,7 @@ class DatabaseTools {
 
     private var dbName   : String = "invalid.db"
     private var deviceId : String
-    var randomId : String
+    private var randomId : String
     private var refreshCounter = 0
 
     @SuppressLint("HardwareIds")
@@ -60,8 +60,8 @@ class DatabaseTools {
             .doneAddingTables()
     }
 
-    fun dumpProtobuf() {
-        var tripString : String = unpackAll()
+    fun dumpProtobuf(mMeta : Map<String, Any>) {
+        var tripString : String = unpackAll(mMeta)
         try {
             var temp = ProtobufTools.toProto(
                 tripString,
@@ -74,23 +74,19 @@ class DatabaseTools {
             }
         } catch (e: Exception) { }
         easiestDB.deleteDatabase()
-
-        incrementDatabase()
     }
 
-    private fun unpackAll(): String {
+    private fun unpackAll(mMeta : Map<String, Any>): String {
 
-        val metaJSON      = unpackMeta()
         val metaSensorSet = unpackSensorSet()
 
-        var Trip : Map<String, Any> = mapOf(
-            "startingTimestamp" to 0,
-            "endingTimestamp"   to 2,
-            "deviceId"          to "hello",
+        var Trip : Map<String, Any?> = mapOf(
+            "startingTimestamp" to mMeta["startingTimestamp"],
+            "endingTimestamp"   to mMeta["endingTimestamp"],
+            "deviceId"          to mMeta["deviceId"],
 
             "SensorSet" to metaSensorSet
         )
-
         return JSONObject(Trip).toString()
     }
 
@@ -114,14 +110,6 @@ class DatabaseTools {
         cursor?.close()
 
         return JSONObject(packedMeta)
-    }
-
-    fun dumpMeta(meta : Map<String, Any>) {
-        var packed_str : String = JSONObject(meta).toString()
-        easiestDB.addDataInTable(
-            0,
-            Datum(1, packed_str),
-        )
     }
 
     fun dumpSensor(sensor : Map<String, Any>) {

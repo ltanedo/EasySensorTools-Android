@@ -37,12 +37,8 @@ class AmplifyTools {
         }
     }
 
-    fun uploadfile(file: File) {
-
-        val exampleFile = File(Context.filesDir, "ExampleKey")
-        exampleFile.writeText("Example file contents")
-
-        Amplify.Storage.uploadFile("temp1.pb", file,
+    fun uploadFile(file: File, name: String) {
+        Amplify.Storage.uploadFile(name, file,
             { Log.i("MyAmplifyApp", "Successfully uploaded: ${it.key}");  file.delete() },
             { Log.e("MyAmplifyApp", "Upload failed", it) }
         )

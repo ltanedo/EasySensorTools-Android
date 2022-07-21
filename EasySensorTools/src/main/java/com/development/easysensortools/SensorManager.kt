@@ -26,16 +26,19 @@ class SensorManager : SensorEventListener {
     * */
     private lateinit var mainActivity  : AppCompatActivity
     private lateinit var sensorManager : SensorManager
-    private lateinit var timerObject : CountDownTimer
+    private lateinit var timerObject   : CountDownTimer
     private lateinit var databaseTools : DatabaseTools
+    private lateinit var storageTools  : StorageTools
+
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
 
-    private var samplingRate = 100
+    private var samplingRate    = 100
     private var refreshInterval = 1
-    private var refreshCounter = 0
+    private var refreshCounter  = 0
+    private var amplifyEnabled  = false
 
     /* Sensor Values
     * */
@@ -69,6 +72,7 @@ class SensorManager : SensorEventListener {
     constructor(
         activity: AppCompatActivity,
         mSubscriptions: List<String>,
+        mStorageTools: StorageTools,
         mSamplingRate : Int = 100,
         mRefreshInterval: Int = 2
     ) {
@@ -84,6 +88,7 @@ class SensorManager : SensorEventListener {
         validateSubscriptions(mSubscriptions)
         sensorManager = mainActivity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         databaseTools = DatabaseTools(mainActivity, deviceId, tripId)
+        storageTools  = mStorageTools
     }
 
     @SuppressLint("MissingPermission")
@@ -130,17 +135,11 @@ class SensorManager : SensorEventListener {
         // set start time [the time in nanoseconds]
         startingTimestamp = System.currentTimeMillis();
 
-        var meta : Map<String, Any> = mapOf(
-                "startingTimestamp" to startingTimestamp,
-                "endingTimestamp"   to currentTimestamp,
-                "deviceId"          to deviceId
-                )
-        databaseTools.dumpMeta(meta)
-
         Log.i("diff", currentTimestamp.toString())
         timerObject = object : CountDownTimer(10000, samplingRate.toLong()) { //1000 is 1 second
             override fun onTick(millisUntilFinished: Long) {
                 Log.d("TIMER", sensor.toString())
+                Log.d("TIMER", samplingRate.toString())
                 currentTimestamp = System.currentTimeMillis()
                 var temp : Map<String,Any> = sensor["loc"] as Map<String, Any>
                 if ("latitude" in temp) { databaseTools.dumpSensor(sensor) }
@@ -157,6 +156,8 @@ class SensorManager : SensorEventListener {
     }
 
     fun refresh() {
+        Log.i("refresh", "Refresh was called")
+        if (amplifyEnabled) storageTools.uploadAll()
         refreshCounter += 1
         startingTimestamp = System.currentTimeMillis()
         var meta : Map<String, Any> = mapOf(
@@ -164,8 +165,8 @@ class SensorManager : SensorEventListener {
             "endingTimestamp"   to currentTimestamp,
             "deviceId"          to deviceId
         )
-        databaseTools.dumpMeta(meta)
-        databaseTools.dumpProtobuf()
+        databaseTools.dumpProtobuf(meta)
+        databaseTools.incrementDatabase()
     }
 
     private fun stopStamping() {
@@ -173,7 +174,11 @@ class SensorManager : SensorEventListener {
         timerObject.cancel()
     }
 
-    fun start() {
+    fun start(mSamplingPeriodUs: Int, mRefreshInterval: Int, mAmplifyEnabled: Boolean) {
+        samplingRate   = mSamplingPeriodUs
+        refreshInterval = mRefreshInterval
+        amplifyEnabled = mAmplifyEnabled
+
         databaseTools.refreshDatabase(tripId)
         registerListeners()
         startUpdatingLocation()
@@ -185,8 +190,7 @@ class SensorManager : SensorEventListener {
             "endingTimestamp"   to currentTimestamp,
             "deviceId"          to deviceId
         )
-        databaseTools.dumpMeta(meta)
-        databaseTools.dumpProtobuf()
+        databaseTools.dumpProtobuf(meta)
         unregisterListeners()
         stopUpdatingLocation()
         stopStamping()
