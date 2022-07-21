@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.development.example.databinding.ActivityMainBinding
 
-import com.development.Collection
+import com.development.EasySensorTools
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var startServiceButton : Button
     private lateinit var dataTextView: TextView
 
-    private lateinit var mTestSDK : Collection
+    private lateinit var mTestSDK : EasySensorTools
     private var isRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        mTestSDK = Collection(
+        mTestSDK = EasySensorTools(
             this,
             listOf(
                 "TYPE_ACCELEROMETER",

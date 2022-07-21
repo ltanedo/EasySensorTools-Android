@@ -11,7 +11,7 @@ import java.io.FileOutputStream
 import java.lang.Exception
 
 
-class Collection {
+class EasySensorTools {
 
     // Configuration
     private var samplingPeriodUs : Int      = 20000
