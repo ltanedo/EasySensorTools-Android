@@ -1,0 +1,125 @@
+/*****************************************************************************
+            Relevant Documents Below
+----------------------------------------------------------------------------
+https://developers.google.com/protocol-buffers/docs/proto3
+https://developer.android.com/reference/android/hardware/SensorEvent#values
+******************************************************************************/
+
+syntax = "proto3";
+
+message Sensor {
+
+    int64 timestamp = 1;
+    LOCATION loc    = 2;
+
+    /* required */
+    TYPE_ACCELEROMETER    acc = 3;
+    TYPE_ROTATION_VECTOR  rot = 4;
+    TYPE_GYROSCOPE        gyr = 5;
+
+    /* optional */
+    optional TYPE_LINEAR_ACCELERATION  lin = 6;
+    optional TYPE_GRAVITY              gra = 7;
+    optional TYPE_MAGNETIC_FIELD       mag = 8;
+    optional TYPE_ORIENTATION          ori = 9;
+}
+
+message Trip { 
+    int64  startingTimestamp = 1;
+    int64  endingTimestamp   = 2;
+    string deviceId          = 3;
+
+    repeated Sensor SensorSet  = 4;
+}
+
+/*************************** Below are REQUIRED 
+****************/
+
+message LOCATION {
+
+    double latitude  = 1;
+    double longitude = 2;
+    double altitude  = 3;
+    double speed     = 4;
+
+    /* time in "Sensor" class */
+    int64  time = 5;
+
+    double accuracy                      = 6;
+    double verticalAccuracyMeters        = 7;
+    double speedAccuracyMetersPerSecond  = 8;
+    double bearingAccuracyDegrees        = 9;
+}
+
+message TYPE_ACCELEROMETER {
+    /*
+        All values are in SI units (m/s^2)
+        - values[0]: Acceleration minus Gx on the x-axis
+        - values[1]: Acceleration minus Gy on the y-axis
+        - values[2]: Acceleration minus Gz on the z-axis
+    */
+
+  double x = 1;   
+  double y = 2;
+  double z = 3;
+}   
+message TYPE_ROTATION_VECTOR {
+    /*
+        values[0]: x*sin(θ/2)
+        values[1]: y*sin(θ/2)
+        values[2]: z*sin(θ/2)
+        values[3]: cos(θ/2)
+        values[4]: estimated heading Accuracy (in radians) (-1 if unavailable)
+    */
+    
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double cos      = 4;
+  double accuracy = 5;
+}
+message TYPE_GYROSCOPE {         // Differrent
+    /* 
+        values[0]: Angular speed around the x-axis
+        values[1]: Angular speed around the y-axis
+        values[2]: Angular speed around the z-axis
+    */
+
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+
+
+/***************************  Below are OPTIONAL  
+****************/
+
+
+message TYPE_LINEAR_ACCELERATION { 
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+message TYPE_GRAVITY { 
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+message TYPE_MAGNETIC_FIELD { 
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+message TYPE_ORIENTATION {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+/***************************   Below are UNIMPLEMENTED
+*********************/
+
+// message TYPE_MOTION_DETECT {}
+// message TYPE_PRESSURE {}
+// message TYPE_PROXIMITY {}
